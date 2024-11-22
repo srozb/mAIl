@@ -62,7 +62,7 @@ Sample Output:
         },
         "classification": "Safe",
         "certainty_level": 97,
-        "content_keywords": ["invoice", "billing"],
+        "tags": ["invoice", "billing"],
         "reason": "The email appears to be a legitimate billing communication."
     },
     {
@@ -74,7 +74,7 @@ Sample Output:
         },
         "classification": "Phishing",
         "certainty_level": 95,
-        "content_keywords": ["account", "compromised", "reset password"],
+        "tags": ["account", "compromised", "reset password"],
         "reason": "The email contains language indicative of phishing attempts."
     }
 ]

@@ -1,7 +1,7 @@
 import magic
 import extract_msg
 import eml_parser
-from typing import Dict
+from typing import Dict, List
 
 def determine_file_type(file_path: str) -> str:
     """Determine the file type of the provided email file."""
@@ -14,6 +14,19 @@ def determine_file_type(file_path: str) -> str:
     else:
         raise ValueError("Unsupported file type. Only .eml and .msg files are supported.")
 
+def extract_eml_attachments(eml_parsed_data: dict) -> List[Dict]:
+    """Extracts attachments from a parsed .eml file."""
+    attachments = []
+    if "attachment" not in eml_parsed_data:
+        return attachments
+    for attachment in eml_parsed_data['attachment']:
+        attachments.append({
+            "name": attachment["filename"],
+            "type": attachment["mime_type"],
+            "size": attachment["size"]
+        })
+    return attachments
+
 def parse_eml_email(file_path: str) -> Dict:
     """Parses an .eml file and extracts relevant information."""
     with open(file_path, "rb") as f:
@@ -24,7 +37,19 @@ def parse_eml_email(file_path: str) -> Dict:
         "from": parsed_eml['header']['from'],
         "to": parsed_eml['header']['to'],
         "body": parsed_eml['body'][0]['content'],
+        "attachments": extract_eml_attachments(parsed_eml)
     }
+
+def extract_msg_attachments(msg: extract_msg.Message) -> List[Dict]:  #TODO: Test msg attachment parsing
+    """Extracts attachments from a parsed .msg file."""
+    attachments = []
+    for attachment in msg.attachments:
+        attachments.append({
+            "name": attachment.longFilename or attachment.shortFilename,
+            "type": magic.from_buffer(attachment.data, mime=True),
+            "size": len(attachment.data)
+        })
+    return attachments
 
 def parse_msg_email(file_path: str) -> Dict:
     """Parses an Outlook .msg file and extracts relevant information."""
@@ -32,8 +57,10 @@ def parse_msg_email(file_path: str) -> Dict:
     return {
         "subject": msg.subject,
         "from": msg.sender,
-        "to": msg.recipients,
+        "to": ", ".join([x.formatted for x in msg.recipients]),
         "body": msg.body,
+        "attachments": extract_msg_attachments(msg)
+
     }
 
 def parse_email(file_path: str) -> Dict:
