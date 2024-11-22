@@ -10,14 +10,16 @@ def filterMarkdown(content: str) -> str:
 
 def classify_email(content: str, attachments: list, model_name: str) -> dict:
     template=(
-        "You are an expert in email security. Analyze the following email content:\n"
+        "You are an expert in email security. Analyze the following email content including attachment metadata if available:\n"
         "{email_content}\n\n"
         "Attachments: {attachments}\n\n"
         "Provide the following as JSON output:\n"
         "1. Classification: Is this email Spam, Phishing, Malicious, or Safe?\n"
-        "2. Content Keywords: List a few key phrases or words from the email.\n"
+        "2. Tags: List a few key tags reflecting the content.\n"
         "3. Reason: Explain the reasoning behind the classification in one or two sentences.\n"
-        "4. Certainty Level: Provide a certainty score for your classification between 0-100%."
+        "4. Certainty Level: Provide a certainty score for your classification between 0-100%.\n\n"
+        "Factors to consider include suspicious sender, url, file names, file types (e.g., '.exe', '.js', '.gz'), double extensions (e.g. '.pdf.js'), rare mime types, and other techniques employed by threat actors."
+        "Do not include percentage signs in the Certainty Level, and ensure all strings are JSON-safe. Return only json, without additional remarks so I can parse it easily."
     )
 
     attachment_descriptions = "\n".join(

@@ -1,4 +1,5 @@
 data/*
+benchmark/*.log
 Pipfile
 Pipfile.lock
-
+.DS_Store

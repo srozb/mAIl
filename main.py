@@ -1,6 +1,7 @@
 import os
 import argparse
 import json
+import time
 from src.email_parser import parse_email
 from src.classifier import classify_email
 
@@ -15,12 +16,13 @@ def process_emails(email_files, model_name):
                 f"From: {parsed_email['from']}\n"
                 f"To: {parsed_email['to']}\n\n{parsed_email['body']}"
             )
+            start_time = time.time()
             classification_result = classify_email(
                 content,
                 attachments=parsed_email.get("attachments", []),
                 model_name=model_name
             )
-
+            inference_time = time.time() - start_time
             results.append({
                 "file": email_file,
                 "email_metadata": {
@@ -32,6 +34,7 @@ def process_emails(email_files, model_name):
                 "certainty_level": classification_result.get("Certainty Level"),
                 "tags": classification_result.get("Tags"),
                 "reason": classification_result.get("Reason"),
+                "inference_time": inference_time
             })
         except Exception as e:
             results.append({
@@ -56,9 +59,4 @@ if __name__ == "__main__":
         os.environ["OLLAMA_HOST"] = args.host
 
     results = process_emails(args.email_files, args.model)
-    try:
-      print(json.dumps(results, indent=4))
-    except:
-        print("Parsing error, results: ")
-        print(results)
-        breakpoint()
+    print(json.dumps(results))

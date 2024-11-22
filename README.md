@@ -115,6 +115,21 @@ You can also set the `OLLAMA_HOST` environment variable directly before running 
 * `extract-msg` for parsing .msg files
 * LangChain and Ollama for email classification using large language models (LLMs)
 
+## Benchmarking
+
+Benchmark scripts and results are located in the `benchmark/` directory.
+
+### Scripts
+
+The directory includes scripts to:
+
+1. Automatically run benchmarks across multiple models and datasets.
+2. Parse logs and generate a comprehensive markdown table summarizing the results.
+
+### Results
+Check the detailed benchmark results in [benchmark/benchmark.md](benchmark/benchmark.md). 
+This document provides performance comparisons for different models, including classification accuracy and inference times.
+
 ## License
 
 This project is licensed under the MIT License - see the [LICENSE](/LICENSE) file for details.
