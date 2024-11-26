@@ -127,7 +127,8 @@ The directory includes scripts to:
 2. Parse logs and generate a comprehensive markdown table summarizing the results.
 
 ### Results
-Check the detailed benchmark results in [benchmark/benchmark.md](benchmark/benchmark.md). 
+
+Check the detailed benchmark results in [benchmark/benchmark.md](benchmark/benchmark.md).
 This document provides performance comparisons for different models, including classification accuracy and inference times.
 
 ## License
@@ -145,4 +146,4 @@ This project is licensed under the MIT License - see the [LICENSE](/LICENSE) fil
 ## Acknowledgments
 
 LangChain and Ollama for their amazing LLM-powered solutions.
-Python community for creating useful libraries like python-magic and eml-parser.
+Python community for creating useful libraries used in this project.
