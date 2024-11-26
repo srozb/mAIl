@@ -3,10 +3,11 @@ import json
 import glob
 import statistics
 
+
 def parse_log_file(log_file):
     """Parse a log file containing one JSON line per result."""
     results = []
-    with open(log_file, "r") as f:
+    with open(log_file, "r", encoding="utf-8") as f:
         for line in f:
             try:
                 json_line = json.loads(line.strip())
@@ -16,11 +17,17 @@ def parse_log_file(log_file):
                 print(f"Error decoding JSON in {log_file}: {e}")
     return results
 
+
 def summarize_results(log_dir, category):
     """Summarize results from log files for a given category (safe or malicious)."""
     summary = {}
     for log_file in glob.glob(f"{log_dir}/test_{category}_*.log"):
-        model_name = os.path.basename(log_file).replace(f"test_{category}_", "").replace(".log", "").replace("_", ":")
+        model_name = (
+            os.path.basename(log_file)
+            .replace(f"test_{category}_", "")
+            .replace(".log", "")
+            .replace("_", ":")
+        )
         results = parse_log_file(log_file)
 
         correct = 0
@@ -37,16 +44,19 @@ def summarize_results(log_dir, category):
                     # Count uncertain response as mistake
                     continue
                 is_correct = (
-                    (category == "safe" and result["classification"].lower() == "safe") or
-                    (category == "malicious" and result["classification"].lower() != "safe")
+                    category == "safe" and result["classification"].lower() == "safe"
+                ) or (
+                    category == "malicious"
+                    and result["classification"].lower() != "safe"
                 )
                 if is_correct:
                     correct += 1
                 inference_times.append(result["inference_time"])
 
-
         accuracy = correct / total * 100 if total > 0 else 0
-        avg_inference_time = statistics.mean(inference_times) if inference_times else float('nan')
+        avg_inference_time = (
+            statistics.mean(inference_times) if inference_times else float("nan")
+        )
 
         summary[model_name] = {
             "accuracy": accuracy,
@@ -55,6 +65,7 @@ def summarize_results(log_dir, category):
         }
 
     return summary
+
 
 def generate_markdown_table(safe_summary, malicious_summary):
     """Generate a markdown table comparing models across categories."""
@@ -69,11 +80,22 @@ def generate_markdown_table(safe_summary, malicious_summary):
         avg_time_safe = safe_summary.get(model, {}).get("avg_inference_time", "N/A")
         avg_time_mal = malicious_summary.get(model, {}).get("avg_inference_time", "N/A")
 
-        avg_time = statistics.mean([t for t in [avg_time_safe, avg_time_mal] if isinstance(t, (int, float))]) if avg_time_safe != "N/A" and avg_time_mal != "N/A" else "N/A"
+        avg_time = (
+            statistics.mean(
+                [
+                    t
+                    for t in [avg_time_safe, avg_time_mal]
+                    if isinstance(t, (int, float))
+                ]
+            )
+            if avg_time_safe != "N/A" and avg_time_mal != "N/A"
+            else "N/A"
+        )
 
         table += f"| {model:<14} | {safe_acc:<17.2f} | {mal_acc:<23.2f} | {avg_time:<23.2f} |\n"
 
     return table
+
 
 def main():
     LOG_DIR = "."  # Directory containing the log files
@@ -83,11 +105,12 @@ def main():
     markdown_table = generate_markdown_table(safe_summary, malicious_summary)
 
     # Write the markdown table to a file
-    with open("benchmark.md", "w") as f:
+    with open("benchmark.md", "w", encoding="utf-8") as f:
         f.write("# Benchmark Results\n\n")
         f.write(markdown_table)
 
     print("✅ Benchmark results saved to benchmark.md")
+
 
 if __name__ == "__main__":
     main()
