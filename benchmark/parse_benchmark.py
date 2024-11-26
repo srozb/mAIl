@@ -1,3 +1,29 @@
+"""
+Module for summarizing and benchmarking email classification results.
+
+This module provides functionality to:
+- Parse log files containing JSON-formatted classification results.
+- Summarize the results by calculating accuracy, inference time, and error rates
+  for different models and categories (safe and malicious emails).
+- Generate a Markdown table comparing the performance of models across categories.
+- Save the benchmarking results to a `benchmark.md` file.
+
+Usage:
+    Run this script directly to process log files in the specified directory
+    and generate a Markdown summary of the results.
+
+Functions:
+    parse_log_file(log_file): Parses a log file and extracts JSON-formatted results.
+    summarize_results(log_dir, category): Summarizes accuracy and inference time
+                                           for a given category of emails.
+    generate_markdown_table(safe_summary, malicious_summary): Creates a Markdown table
+                                                              comparing model performance.
+    main(): Main function to generate benchmarking results and save them to a file.
+
+Dependencies:
+    - Python standard library: os, json, glob, statistics
+"""
+
 import os
 import json
 import glob
@@ -40,7 +66,7 @@ def summarize_results(log_dir, category):
                 continue
 
             if "classification" in result and "inference_time" in result:
-                if result["classification"] == None:
+                if result["classification"] is None:
                     # Count uncertain response as mistake
                     continue
                 is_correct = (
@@ -69,8 +95,10 @@ def summarize_results(log_dir, category):
 
 def generate_markdown_table(safe_summary, malicious_summary):
     """Generate a markdown table comparing models across categories."""
-    table = "| Model          | Safe Accuracy (%) | Malicious Accuracy (%) | Avg Inference Time (s) |\n"
-    table += "|----------------|-------------------|-------------------------|-------------------------|\n"
+    table = "| Model          | Safe Accuracy (%) | Malicious Accuracy (%) "
+    table += "| Avg Inference Time (s) |\n"
+    table += "|----------------|-------------------|-------------------------"
+    table += "|-------------------------|\n"
 
     all_models = set(safe_summary.keys()).union(malicious_summary.keys())
 
@@ -98,9 +126,24 @@ def generate_markdown_table(safe_summary, malicious_summary):
 
 
 def main():
-    LOG_DIR = "."  # Directory containing the log files
-    safe_summary = summarize_results(LOG_DIR, "safe")
-    malicious_summary = summarize_results(LOG_DIR, "malicious")
+    """
+    Main function to summarize benchmarking results and generate a Markdown table.
+
+    This function performs the following steps:
+    1. Summarizes results for both "safe" and "malicious" email classifications
+       by analyzing log files in the specified directory.
+    2. Generates a Markdown table comparing model performance metrics such as
+       accuracy, inference time, and error rates.
+    3. Writes the generated Markdown table to a `benchmark.md` file.
+    4. Prints a confirmation message indicating the location of the results.
+
+    Returns:
+        None
+    """
+
+    log_dir = "."  # Directory containing the log files
+    safe_summary = summarize_results(log_dir, "safe")
+    malicious_summary = summarize_results(log_dir, "malicious")
 
     markdown_table = generate_markdown_table(safe_summary, malicious_summary)
 

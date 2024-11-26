@@ -1,7 +1,34 @@
+"""
+Module for parsing and extracting data from email files (.eml and .msg).
+
+This module provides utilities to:
+- Determine the type of an email file based on its MIME type.
+- Parse email content and metadata, including sender, recipient, subject, body,
+  and attachments.
+- Support for .eml (RFC 822) and .msg (Microsoft Outlook) email file formats.
+
+Dependencies:
+    - magic: For MIME type detection of files.
+    - extract_msg: For parsing Microsoft Outlook .msg files.
+    - eml_parser: For parsing .eml files.
+
+Functions:
+    - determine_file_type(file_path): 
+        Detects the file type (.eml or .msg) based on MIME type.
+    - extract_eml_attachments(eml_parsed_data): 
+        Extracts attachment metadata from a parsed .eml file.
+    - parse_eml_email(file_path): Parses an .eml file to extract email data.
+    - extract_msg_attachments(msg): 
+        Extracts attachment metadata from a parsed .msg file.
+    - parse_msg_email(file_path): Parses a .msg file to extract email data.
+    - parse_email(file_path): 
+        Detects file type and parses email content accordingly.
+"""
+
+from typing import Dict, List
 import magic
 import extract_msg
 import eml_parser
-from typing import Dict, List
 
 
 def determine_file_type(file_path: str) -> str:
@@ -10,12 +37,9 @@ def determine_file_type(file_path: str) -> str:
     mime_type = mime.from_file(file_path)
     if mime_type == "message/rfc822":
         return "eml"
-    elif mime_type == "application/vnd.ms-outlook":
+    if mime_type == "application/vnd.ms-outlook":
         return "msg"
-    else:
-        raise ValueError(
-            "Unsupported file type. Only .eml and .msg files are supported."
-        )
+    raise ValueError("Unsupported file type. Only .eml and .msg files are supported.")
 
 
 def extract_eml_attachments(eml_parsed_data: dict) -> List[Dict]:
@@ -81,7 +105,6 @@ def parse_email(file_path: str) -> Dict:
     file_type = determine_file_type(file_path)
     if file_type == "eml":
         return parse_eml_email(file_path)
-    elif file_type == "msg":
+    if file_type == "msg":
         return parse_msg_email(file_path)
-    else:
-        raise ValueError(f"Unsupported file type: {file_type}")
+    raise ValueError(f"Unsupported file type: {file_type}")

@@ -1,3 +1,35 @@
+"""
+Main script for email classification.
+
+This script processes and classifies the content of multiple email files,
+utilizing a specified machine learning model. It extracts metadata, body content,
+and attachment details from each email file, passes the data to a classification
+function, and outputs the results as JSON.
+
+Features:
+- Supports classification of email files using various machine learning models.
+- Extracts email metadata (e.g., subject, sender, recipients) and attachments.
+- Measures inference time for each email classification.
+- Handles errors gracefully, logging issues for unsupported or problematic files.
+
+Command-Line Arguments:
+- `-m` or `--model`: Specify the name of the model to use for classification
+  (default: "gemma2:27b").
+- `-H` or `--host`: Set the `OLLAMA_HOST` environment variable for model communication.
+- `email_files`: Paths to the email files to be classified. Accepts multiple files.
+
+Dependencies:
+- Requires `email_parser` for extracting email content and metadata.
+- Requires `classifier` for performing classification using a machine learning model.
+
+Functions:
+- `process_emails(email_files, model_name)`: Processes a list of email files, 
+    classifies their content, and returns the results as a list of dictionaries.
+
+Example Usage:
+    python main.py -m gemma2:27b data/email1.eml data/email2.msg
+"""
+
 import os
 import argparse
 import json
