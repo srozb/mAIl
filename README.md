@@ -25,6 +25,8 @@ Create a virtual environment using pipenv:
 pipenv install
 ```
 
+Ensure Python version >= **3.9**.
+
 Make sure you have access to an Ollama daemon.
 
 ```bash
